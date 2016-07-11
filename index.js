@@ -34,21 +34,21 @@ var stack = Stack.compose(
   (req, res, cb) => router(req, res, {}, cb)
 )
 
-function handler (req, res) {
-  var done = finalhandler(req, res, {onerror: onError})
-  stack(req, res, done)
-}
-
-var server = http.createServer(handler)
-
-server.listen(argv.port)
-server.on('listening', onListening)
-
 function onListening () {
   console.log(`listening on http://localhost:${argv.port}`)
-  console.log(server.address())
+}
+
+function onReq (req, res) {
+  var done = finalhandler(req, res, {onerror: onError})
+  stack(req, res, done)
 }
 
 function onError (err) {
   if (err.statusCode !== 404) console.log(err)
 }
+
+var server = http.createServer(onReq)
+server.listen(argv.port)
+server.on('listening', onListening)
+
+module.exports = server
