@@ -1,0 +1,39 @@
+{
+  "name": "pi-video",
+  "version": "1.0.0",
+  "description": "youtube-dl server",
+  "main": "index.js",
+  "scripts": {
+    "test": "tape test.js | tap-format-spec && standard | snazzy",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bcomnes/pi-video.git"
+  },
+  "keywords": [
+    "youtube-dl"
+  ],
+  "author": "Bret Comnes",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bcomnes/pi-video/issues"
+  },
+  "homepage": "https://github.com/bcomnes/pi-video#readme",
+  "devDependencies": {
+    "@tap-format/spec": "^0.2.0",
+    "snazzy": "^4.0.0",
+    "standard": "^7.1.2",
+    "standard-format": "^2.2.2",
+    "tape": "^4.6.0",
+    "nodemon": "^1.9.2"
+  },
+  "dependencies": {
+    "http-hash-router": "^1.1.0",
+    "minimist": "^1.2.0",
+    "morgan": "^1.7.0",
+    "st": "^1.2.0",
+    "stack": "^0.1.0"
+  }
+}
