@@ -11,22 +11,20 @@ var argv = minimist(process.argv.slice(2), {
   default: { port: 8000 }
 })
 
-var routes = HttpHashRouter()
+var router = HttpHashRouter()
 
 var staticPath = path.join(__dirname, 'static')
-routes.set('/static/*', st({ path: staticPath, url: '/static' }))
 
-routes.set('/', function (req, res, opts, cb) {
+router.set('/', function (req, res, opts, cb) {
   res.end('welcome!')
 })
 
-function router (req, res, next) {
-  return routes(req, res, {}, next)
-}
+stack.errorHandler = onError
 
 var handler = stack(
   logger,
-  router
+  stack.mount('/static', st({ path: staticPath, url: '/static', passthrough: true })),
+  (req, res, cb) => router(req, res, {}, cb)
 )
 
 var server = http.createServer(handler)
@@ -37,4 +35,13 @@ server.on('listening', onListening)
 function onListening () {
   console.log(`Server started on port http://localhost:${argv.port}`)
   console.log(server.address())
+}
+
+function onError (req, res, err) {
+  console.log(err)
+  if (err) {
+    // use your own custom error serialization.
+    res.statusCode = err.statusCode || 500
+    res.end(err.message)
+  }
 }
