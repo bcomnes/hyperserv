@@ -4,7 +4,9 @@ var st = require('st')
 var path = require('path')
 var HttpHashRouter = require('http-hash-router')
 var logger = require('morgan')('dev')
-var stack = require('stack')
+var Stack = require('stack')
+// var favicon = require('serve-favicon')
+var finalhandler = require('finalhandler')
 
 var argv = minimist(process.argv.slice(2), {
   alias: { p: 'port' },
@@ -14,18 +16,28 @@ var argv = minimist(process.argv.slice(2), {
 var router = HttpHashRouter()
 
 var staticPath = path.join(__dirname, 'static')
+// var iconPath = path.join(staticPath, 'favicon.ico')
 
 router.set('/', function (req, res, opts, cb) {
   res.end('welcome!')
 })
 
-stack.errorHandler = onError
+router.set('/crash', function (req, res, opts, cb) {
+  throw new Error('this was supposed to crash')
+})
 
-var handler = stack(
+router.set('/static/*', st({ path: staticPath, url: '/static' }))
+
+var stack = Stack.compose(
+  // favicon(iconPath),
   logger,
-  stack.mount('/static', st({ path: staticPath, url: '/static', passthrough: true })),
   (req, res, cb) => router(req, res, {}, cb)
 )
+
+function handler (req, res) {
+  var done = finalhandler(req, res, {onerror: onError})
+  stack(req, res, done)
+}
 
 var server = http.createServer(handler)
 
@@ -33,15 +45,10 @@ server.listen(argv.port)
 server.on('listening', onListening)
 
 function onListening () {
-  console.log(`Server started on port http://localhost:${argv.port}`)
+  console.log(`listening on http://localhost:${argv.port}`)
   console.log(server.address())
 }
 
-function onError (req, res, err) {
-  console.log(err)
-  if (err) {
-    // use your own custom error serialization.
-    res.statusCode = err.statusCode || 500
-    res.end(err.message)
-  }
+function onError (err) {
+  if (err.statusCode !== 404) console.log(err)
 }
