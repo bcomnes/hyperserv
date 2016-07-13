@@ -110,7 +110,7 @@ Default options:
 
 This is the `http-hash-router` router object that has simply been attached to the `http` server instance.  Read all about it here:
 
-- [Matt-Esch/http-hash](https://github.com/Matt-Esch/http-hash-router)
+- [Matt-Esch/http-hash-router](https://github.com/Matt-Esch/http-hash-router)
 - [Matt-Esch/http-hash](https://github.com/Matt-Esch/http-hash)
 
 #### `server.router.set(pattern, routeHandler)`
@@ -121,7 +121,7 @@ See [http-hash-router#example](https://github.com/Matt-Esch/http-hash-router#exa
 
 #### `server.composeStack([ layers ])`
 
-This lets you pass an array of middleware layers (`function layer (req, res, cb) {}`) to stick in front of the `http-hash-router` layer.  You can do body parsing, cookie parsing, sessions, and auth stuff here.  Calling `composeStack` tosses the existing middleware stack in favor of the one you pass in.
+This lets you pass an array of middleware layers (`function layer (req, res, cb) {}`) to stick in front of the `http-hash-router` layer.  You can do body parsing, cookie parsing, sessions, and auth stuff here.  Calling `composeStack` tosses the existing middleware stack out in favor of the one you pass in here.
 
 #### `server.serveStatic()`
 
