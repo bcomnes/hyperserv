@@ -2,7 +2,8 @@
 
 var minimist = require('minimist')
 var logger = require('morgan')('dev')
-var server = require('./')()
+var hyperserv = require('./')
+var server = hyperserv()
 var argv = minimist(process.argv.slice(2), {
   alias: { p: 'port' },
   default: { port: 8000 }
@@ -17,7 +18,6 @@ server.router.set('/', function (req, res, opts, cb) {
 
 // Set up routes
 server.router.set('/:name', function (req, res, opts, cb) {
-  console.log(opts)
   res.end('hello ' + opts.params.name)
 })
 
@@ -32,18 +32,3 @@ server.composeStack([
 ])
 
 server.listen(argv.port)
-server.on('listening', onListening)
-server.on('error', onError)
-
-function onListening () {
-  console.log(`listening on http://localhost:${argv.port}`)
-  var serveStatic = server.serveStatic()
-  if (serveStatic.status) {
-    console.log('serving static from ' +
-      `${serveStatic.path} at ${serveStatic.mount}`)
-  }
-}
-
-function onError (err) {
-  if (err.statusCode !== 404) console.log(err)
-}

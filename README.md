@@ -96,7 +96,9 @@ Default options:
   serveStatic: true,
   staticPath: path.join(process.cwd(), 'static'),
   staticMount: `/${path.basename(opts.staticPath)}`,
-  hideTrace: true
+  sendTraces: true,
+  logTraces: true,
+  logDetails: true
 }
 ```
 
@@ -104,7 +106,16 @@ Default options:
 - `serveStatic`: Enable the static file server route provided by [`st`](http://npmjs.com/st). Defaults to `true`.  Short circuits to `false` if it can't stat the folder it tries to serve out of.
 - `staticPath`: Specify the path to serve static files from.  Defaults to `path.join(process.cwd(), 'static')` e.g. a folder named `static` in the directory you are starting your process in.
 - `staticMount`: Specify the router mount point to use.  Defaults to `/${path.basename(opts.staticPath)}`.
-- `hideTrace`: Specify if stack traces are sent in the `res` if the `req` runs into any kind of error.  Defaults to `false`
+- `sendTraces`: Specify if stack traces are sent in the `res` if the `req` runs into any kind of error.  Defaults to `false`
+- `logTraces`: Attach the default error handler to the `error` event emitted from the server whenever it encounters an error.
+
+```js
+function errorHandler (err) {
+  if (err.statusCode !== 404) console.log(err)
+}
+```
+
+- `logDetails`: Attach the default server start log message to the server to fire when it starts listening.
 
 #### `server.router`
 
@@ -147,6 +158,22 @@ function makeRoute (layer) {
   }
 }
 ```
+
+#### `hyperserv.errorHandler`
+
+This is the default error handler that gets passed to the server's `error` event when `logTraces` is set to true when creating a `server`.  It's just a simple function that logs stack traces when the server doesn't 404.
+
+```js
+function errorHandler (err) {
+  if (err.statusCode !== 404) console.log(err)
+}
+```
+
+If you want to use it as is with the server, use the `logTraces` option.  It is exported only for convince and access and should not be normally used directly.
+
+#### `hyperserv.logDetails`
+
+This is the default logging function that runs when the server starts listening.  Use the `logDetails` options to turn it on or off.  The function is exported for convince and access and should not be normally used directly.
 
 `¯\_(ツ)_/¯`
 

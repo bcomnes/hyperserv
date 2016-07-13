@@ -15,8 +15,10 @@ function createHyperserv (opts) {
     layers: [ logger ],
     serveStatic: true,
     staticPath: STATIC_PATH,
-    hideTrace: false,
-    staticMount: undefined
+    sendTraces: true,
+    staticMount: undefined,
+    logTraces: true,
+    logDetails: true
   }
 
   opts = extend(defaults, opts)
@@ -54,7 +56,7 @@ function createHyperserv (opts) {
   function onReq (req, res) {
     var done = finalhandler(req, res, {
       onerror: onError,
-      env: opts.hideTrace ? 'production' : 'development'
+      env: opts.sendTraces ? 'development' : 'production'
     })
     stack(req, res, done)
   }
@@ -80,6 +82,10 @@ function createHyperserv (opts) {
   server.composeStack = composeStack
   server.router = router
   server.serveStatic = serveStatic
+
+  if (opts.logDetails) server.on('listening', logDetails)
+  if (opts.logTraces) server.on('error', errorHandler)
+
   return server
 }
 
@@ -90,5 +96,20 @@ function makeRoute (layer) {
   }
 }
 
+function logDetails () {
+  console.log(`listening on http://localhost:${this.address().port}`)
+  var serveStatic = this.serveStatic()
+  if (serveStatic.status) {
+    console.log('serving static from ' +
+      `${serveStatic.path} at ${serveStatic.mount}`)
+  }
+}
+
+function errorHandler (err) {
+  if (err.statusCode !== 404) console.log(err)
+}
+
 module.exports = createHyperserv
 module.exports.makeRoute = makeRoute
+module.exports.errorHandler = errorHandler
+module.exports.logDetails = logDetails
