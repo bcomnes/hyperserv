@@ -1,54 +1,94 @@
-var minimist = require('minimist')
 var http = require('http')
 var st = require('st')
 var path = require('path')
 var HttpHashRouter = require('http-hash-router')
 var logger = require('morgan')('dev')
 var Stack = require('stack')
-// var favicon = require('serve-favicon')
 var finalhandler = require('finalhandler')
+var extend = require('xtend')
+var fs = require('fs')
 
-var argv = minimist(process.argv.slice(2), {
-  alias: { p: 'port' },
-  default: { port: 8000 }
-})
+var STATIC_PATH = path.join(process.cwd(), 'static')
 
-var router = HttpHashRouter()
+function createHyperserv (opts) {
+  var defaults = {
+    layers: [ logger ],
+    serveStatic: true,
+    staticPath: STATIC_PATH,
+    hideTrace: false,
+    staticMount: undefined
+  }
 
-var staticPath = path.join(__dirname, 'static')
-// var iconPath = path.join(staticPath, 'favicon.ico')
+  opts = extend(defaults, opts)
 
-router.set('/', function (req, res, opts, cb) {
-  res.end('welcome!')
-})
+  // Check if a static folder is available by default
+  if (opts.serveStatic) {
+    // mount static serving at the same folder basename
+    if (!opts.staticMount) opts.staticMount = `/${path.basename(opts.staticPath)}`
+    try {
+      fs.statSync(STATIC_PATH)
+    } catch (e) {
+      // Turn of static serving if the folder does not exist
+      opts.serveStatic = false
+    }
+  }
 
-router.set('/crash', function (req, res, opts, cb) {
-  throw new Error('this was supposed to crash')
-})
+  var router = HttpHashRouter()
+  function routerLayer (req, res, cb) { return router(req, res, {}, cb) }
+  opts.layers.push(routerLayer)
+  var stack = Stack.compose.apply(null, opts.layers)
+  var server = http.createServer(onReq)
 
-router.set('/static/*', st({ path: staticPath, url: '/static' }))
+  if (opts.serveStatic) {
+    var staticLayer = st({
+      path: opts.staticPath,
+      url: opts.staticMount,
+      passthrough: true
+    })
+    router.set(
+      opts.staticMount + '/*',
+      makeRoute(staticLayer)
+    )
+  }
 
-var stack = Stack.compose(
-  // favicon(iconPath),
-  logger,
-  (req, res, cb) => router(req, res, {}, cb)
-)
+  function onReq (req, res) {
+    var done = finalhandler(req, res, {
+      onerror: onError,
+      env: opts.hideTrace ? 'production' : 'development'
+    })
+    stack(req, res, done)
+  }
 
-function onListening () {
-  console.log(`listening on http://localhost:${argv.port}`)
+  function onError (err) {
+    server.emit('error', err)
+  }
+
+  function composeStack (newLayers) {
+    opts = extend(opts, {layers: newLayers})
+    opts.layers.push(routerLayer)
+    stack = Stack.compose.apply(null, opts.layers)
+  }
+
+  function serveStatic () {
+    return {
+      status: opts.serveStatic,
+      path: opts.staticPath,
+      mount: opts.staticMount
+    }
+  }
+
+  server.composeStack = composeStack
+  server.router = router
+  server.serveStatic = serveStatic
+  return server
 }
 
-function onReq (req, res) {
-  var done = finalhandler(req, res, {onerror: onError})
-  stack(req, res, done)
+function makeRoute (layer) {
+  return (req, res, opts, cb) => {
+    req.opts = extend(req.opts, opts)
+    layer(req, res, cb)
+  }
 }
 
-function onError (err) {
-  if (err.statusCode !== 404) console.log(err)
-}
-
-var server = http.createServer(onReq)
-server.listen(argv.port)
-server.on('listening', onListening)
-
-module.exports = server
+module.exports = createHyperserv
+module.exports.makeRoute = makeRoute

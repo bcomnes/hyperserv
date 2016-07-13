@@ -1,16 +1,19 @@
 {
-  "name": "pi-video",
+  "name": "hyperserv",
   "version": "1.0.0",
-  "description": "youtube-dl server",
+  "description": "hypermodular http server",
   "main": "index.js",
+  "bin": {
+    "hyperserv": "./bin.js"
+  },
   "scripts": {
     "test": "tape test.js | tap-format-spec && standard | snazzy",
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start": "node bin.js",
+    "dev": "nodemon bin.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bcomnes/pi-video.git"
+    "url": "git+https://github.com/bcomnes/hyperserv.git"
   },
   "keywords": [
     "youtube-dl"
@@ -18,16 +21,17 @@
   "author": "Bret Comnes",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/bcomnes/pi-video/issues"
+    "url": "https://github.com/bcomnes/hyperserv/issues"
   },
-  "homepage": "https://github.com/bcomnes/pi-video#readme",
+  "homepage": "https://github.com/bcomnes/hyperserv#readme",
   "devDependencies": {
     "@tap-format/spec": "^0.2.0",
+    "nodemon": "^1.9.2",
     "snazzy": "^4.0.0",
     "standard": "^7.1.2",
     "standard-format": "^2.2.2",
     "tape": "^4.6.0",
-    "nodemon": "^1.9.2"
+    "test-server-request": "^3.0.0"
   },
   "dependencies": {
     "finalhandler": "^0.5.0",
@@ -36,6 +40,7 @@
     "morgan": "^1.7.0",
     "serve-favicon": "^2.3.0",
     "st": "^1.2.0",
-    "stack": "^0.1.0"
+    "stack": "^0.1.0",
+    "xtend": "^4.0.1"
   }
 }
