@@ -58,21 +58,6 @@ router.set('/api', {
 })
 
 server.listen(argv.port)
-server.on('listening', onListening)
-server.on('error', onError)
-
-function onListening () {
-  console.log(`listening on http://localhost:${argv.port}`)
-  var serveStatic = server.serveStatic()
-  if (serveStatic.status) {
-    console.log('serving static from ' +
-      `${serveStatic.path} at ${serveStatic.mount}`)
-  }
-}
-
-function onError (err) {
-  if (err.statusCode !== 404) console.log(err)
-}
 ```
 
 ## API
