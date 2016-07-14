@@ -11,7 +11,7 @@ npm i hyperserv
 
 ## Why?
 
-Express is a reliable and widely understood web-framework, but the dream of the node.js 90s was framework free network applicaitons.  [http-framework](https://github.com/Raynos/http-framework) and [substack-flavored-webapp](https://github.com/substack/substack-flavored-webapp) are excellent counterpoints to frameworks like express and hapi but come along with a pile of boilerplate.  hyperserv aims to glue together the basics of any webserver by providing a routing layer, a middlware layer and a static file server to offer up a quick way to write small webservers the hypermodular way (or, more specifically, one hypermodular way)!
+Express is a reliable and widely understood web-framework, but the dream of node.js was framework free network applicaitons.  [http-framework](https://github.com/Raynos/http-framework) and [substack-flavored-webapp](https://github.com/substack/substack-flavored-webapp) are excellent counterpoints to frameworks like express and hapi but come along with a pile of boilerplate.  hyperserv aims to glue together the basics of any webserver by providing a routing layer, a middlware layer and a static file server to offer up a quick way to write small webservers the hypermodular way (or, more specifically, one hypermodular way)!
 
 How you launch and configure your webservers seems to be a deeply personal ceremony.  hyperserv leaves this up to you and just puts together the webserver for you.
 
