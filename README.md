@@ -20,44 +20,44 @@ How you launch and configure your webservers seems to be a deeply personal cerem
 
 ```js
 var minimist = require('minimist')
-var server = require('./')()
-var router = server.router
-var logger = require('morgan')('dev')
+var morgan = require('morgan')
+var Hyperserv = require('hyperserv')
+var app = new Hyperserv()
 var argv = minimist(process.argv.slice(2), {
   alias: { p: 'port' },
   default: { port: 8000 }
 })
 
-// Reconfigure the middleware stack in front of the routes if you want.
-server.composeStack([
-  logger
+process.title = 'hyperserv'
+
+// Reconfigure the middlewre stack sitting in front of the routes.
+app.composeStack([
+  morgan('dev')
 ])
 
 // Set up routes
-router.set('/', function (req, res, opts, cb) {
-  res.end('hello world')
+app.router.set('/', function (req, res, opts, cb) {
+  res.end('hi')
 })
 
-router.set('/:name', function (req, res, opts, cb) {
+// Set up routes with parameters
+app.router.set('/:name', function (req, res, opts, cb) {
   res.end('hello ' + opts.params.name)
 })
 
-// Routes can fly fast and loose.  It don't matter...
-// The server will still keep running
-router.set('/crash', function (req, res, opts, cb) {
+// Routes can fly fast and loose.  It don't matter
+app.router.set('/crash', function (req, res, opts, cb) {
   throw new Error('This route crashed intentionally')
 })
 
-router.set('/api', {
-  GET: function (req, res, opts, cb) {
-    res.end('some payload')
-  },
-  POST: function (req, res, opts, cb) {
-    res.end('some other payload')
-  }
-})
+function expressMiddleware (req, res, next) {
+  res.write(JSON.stringify(req.opts) + '\n')
+  res.end('this is an express/connect style middleware layer')
+}
 
-server.listen(argv.port)
+app.router.set('/:name/express', Hyperserv.makeRoute(expressMiddleware))
+
+app.httpServer.listen(argv.port)
 ```
 
 ## API
@@ -69,9 +69,9 @@ server.listen(argv.port)
 
 You can convert `layers` to `routes` by passing the through `hyperserv.makeRoute(layer)`.
 
-#### `var server = hyperserv([options])`
+#### `var app = new Hyperserv([options])`
 
-Returns a new http server that has a middleware handler, router, and possibly a static file server turned on.  This is simply an instance of `http.createServer` with a few methods and objects tied on.
+Returns a new hyperserv `app` object. It sets up an httpServer that has a middleware handler, router, and possibly a static file server turned on.
 
 Default options:
 
@@ -102,36 +102,44 @@ function errorHandler (err) {
 
 - `logDetails`: Attach the default server start log message to the server to fire when it starts listening.
 
-#### `server.router`
+#### `app.httpServer`
+
+This is an instance of `http.createServer`.  It isn't started yet, so set up your event handlers, and turn it on with `app.httpServer.listen(port)`
+
+#### `app.router`
 
 This is the `http-hash-router` router object that has simply been attached to the `http` server instance.  Read all about it here:
 
 - [Matt-Esch/http-hash-router](https://github.com/Matt-Esch/http-hash-router)
 - [Matt-Esch/http-hash](https://github.com/Matt-Esch/http-hash)
 
-#### `server.router.set(pattern, routeHandler)`
+#### `app.router.set(pattern, routeHandler)`
 
 This sets a route and a route handler.  Remember, routeHandlers expect the following signature `function route (req, res, opts, cb) {}`.  You can compose middleware stack's to plop inside of route handlers using [`stack.compose`](https://github.com/creationix/stack/blob/master/stack.js#L36).
 
 See [http-hash-router#example](https://github.com/Matt-Esch/http-hash-router#example)
 
-#### `server.composeStack([ layers ])`
+#### `app.composeStack([ layers ])`
 
 This lets you pass an array of middleware layers (`function layer (req, res, cb) {}`) to stick in front of the `http-hash-router` layer.  You can do body parsing, cookie parsing, sessions, and auth stuff here.  Calling `composeStack` tosses the existing middleware stack out in favor of the one you pass in here.
 
-#### `server.serveStatic()`
+#### `app.errorHandler`
 
-This function returns an object containing the status of the static file server.
+This is the default error handler that gets passed to the server's `error` event when `logTraces` is set to true when creating a `server`.  It is an instance method that you can reassign if you want.
 
 ```js
-{
-  status: bool,
-  path: opts.staticPath,
-  mount: opts.staticMount
+function errorHandler (err) {
+  if (err.statusCode !== 404) console.log(err)
 }
 ```
 
-#### `hyperserv.makeRoute(layer)`
+If you want to use it as is with the server, use the `logTraces` option.  It is exported only for convince and access and should not be normally used directly.
+
+#### `app.logDetails`
+
+This is the default logging function that runs when the server starts listening.  Use the `logDetails` options to turn it on or off.  It is an instance method that you can reassign if you want.
+
+#### `Hyperserv.makeRoute(layer)`
 
 Pass in a connect style middleware layer and get back a `http-hash-router` route handler.  The returned route handler mixes in any options it receives on its `opts` argument to `req.opts`.
 
@@ -143,22 +151,6 @@ function makeRoute (layer) {
   }
 }
 ```
-
-#### `hyperserv.errorHandler`
-
-This is the default error handler that gets passed to the server's `error` event when `logTraces` is set to true when creating a `server`.  It's just a simple function that logs stack traces when the server doesn't 404.
-
-```js
-function errorHandler (err) {
-  if (err.statusCode !== 404) console.log(err)
-}
-```
-
-If you want to use it as is with the server, use the `logTraces` option.  It is exported only for convince and access and should not be normally used directly.
-
-#### `hyperserv.logDetails`
-
-This is the default logging function that runs when the server starts listening.  Use the `logDetails` options to turn it on or off.  The function is exported for convince and access and should not be normally used directly.
 
 `¯\_(ツ)_/¯`
 

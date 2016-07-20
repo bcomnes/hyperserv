@@ -2,92 +2,82 @@ var http = require('http')
 var st = require('st')
 var path = require('path')
 var HttpHashRouter = require('http-hash-router')
-var logger = require('morgan')('dev')
+var morgan = require('morgan')
 var Stack = require('stack')
 var finalhandler = require('finalhandler')
 var extend = require('xtend')
-var fs = require('fs')
 
-var STATIC_PATH = path.join(process.cwd(), 'static')
+function Hyperserv (opts) {
+  if (!(this instanceof Hyperserv)) return new Hyperserv(opts)
+  if (!opts) opts = {}
+  var self = this
 
-function createHyperserv (opts) {
-  var defaults = {
-    layers: [ logger ],
-    serveStatic: true,
-    staticPath: STATIC_PATH,
-    sendTraces: true,
-    staticMount: undefined,
-    logTraces: true,
-    logDetails: true
-  }
+  this.sendTraces = (opts.sendTraces === undefined) ? true : !!opts.sendTraces
+  this.router = HttpHashRouter()
+  this.onReq = onReq
+  this.httpServer = http.createServer(this.onReq)
+  this.finalhandler = finalhandler
 
-  opts = extend(defaults, opts)
+  this._logDetails = (opts.logDetails === undefined) ? true : !!opts.logDetails
+  this._logTraces = (opts.logTraces === undefined) ? true : !!opts.logTraces
+  this._serveStatic = (opts.serveStatic === undefined) ? true : !!opts.serveStatic
+  this._layers = opts.layers || [ this.logger ]
+  this._stack = Stack.compose.apply(null, this._layers)
+  this._staticPath = opts.staticPath || path.join(process.cwd(), 'static')
+  this._staticMount = opts.staticMount || `/${path.basename(this._staticPath)}`
 
-  // Check if a static folder is available by default
-  if (opts.serveStatic) {
-    // mount static serving at the same folder basename
-    if (!opts.staticMount) opts.staticMount = `/${path.basename(opts.staticPath)}`
-    try {
-      fs.statSync(STATIC_PATH)
-    } catch (e) {
-      // Turn of static serving if the folder does not exist
-      opts.serveStatic = false
-    }
-  }
-
-  var router = HttpHashRouter()
-  function routerLayer (req, res, cb) { return router(req, res, {}, cb) }
-  opts.layers.push(routerLayer)
-  var stack = Stack.compose.apply(null, opts.layers)
-  var server = http.createServer(onReq)
-
-  if (opts.serveStatic) {
-    var staticLayer = st({
-      path: opts.staticPath,
-      url: opts.staticMount,
+  if (this._serveStatic) {
+    this._staticLayer = st({
+      path: this._staticPath,
+      url: this._staticMount,
       passthrough: true
     })
-    router.set(
-      opts.staticMount + '/*',
-      makeRoute(staticLayer)
+    this.router.set(
+      this._staticMount + '/*',
+      makeRoute(this._staticLayer)
     )
   }
 
+  if (this._logDetails) this.httpServer.on('listening', logDetails)
+  if (this._logTraces) this.httpServer.on('error', this.errorHandler)
+
   function onReq (req, res) {
-    var done = finalhandler(req, res, {
-      onerror: onError,
-      env: opts.sendTraces ? 'development' : 'production'
+    var done = self.finalhandler(req, res, {
+      onerror: self.errorHandler,
+      env: self.sendTraces ? 'development' : 'production'
     })
-    stack(req, res, done)
-  }
 
-  function onError (err) {
-    server.emit('error', err)
-  }
+    self._stack(req, res, routeReq)
 
-  function composeStack (newLayers) {
-    opts = extend(opts, {layers: newLayers})
-    opts.layers.push(routerLayer)
-    stack = Stack.compose.apply(null, opts.layers)
-  }
-
-  function serveStatic () {
-    return {
-      status: opts.serveStatic,
-      path: opts.staticPath,
-      mount: opts.staticMount
+    function routeReq (err) {
+      if (err) return done(err)
+      try {
+        self.router(req, res, {}, done)
+      } catch (err) {
+        done(err)
+      }
     }
   }
 
-  server.composeStack = composeStack
-  server.router = router
-  server.serveStatic = serveStatic
-
-  if (opts.logDetails) server.on('listening', logDetails)
-  if (opts.logTraces) server.on('error', errorHandler)
-
-  return server
+  function logDetails () {
+    console.log(`listening on http://localhost:${self.httpServer.address().port}`)
+    if (self._serveStatic) {
+      console.log('serving static from ' +
+        `${self._staticPath} at ${self._staticMount}`)
+    }
+  }
 }
+
+Hyperserv.prototype.composeStack = function (newLayers) {
+  this._layers = newLayers
+  this._stack = Stack.compose.apply(null, this._layers)
+}
+
+Hyperserv.prototype.errorHandler = function (err) {
+  if (err.statusCode !== 404) console.log(err)
+}
+
+Hyperserv.prototype.logger = morgan('dev')
 
 function makeRoute (layer) {
   return (req, res, opts, cb) => {
@@ -96,20 +86,5 @@ function makeRoute (layer) {
   }
 }
 
-function logDetails () {
-  console.log(`listening on http://localhost:${this.address().port}`)
-  var serveStatic = this.serveStatic()
-  if (serveStatic.status) {
-    console.log('serving static from ' +
-      `${serveStatic.path} at ${serveStatic.mount}`)
-  }
-}
-
-function errorHandler (err) {
-  if (err.statusCode !== 404) console.log(err)
-}
-
-module.exports = createHyperserv
+module.exports = Hyperserv
 module.exports.makeRoute = makeRoute
-module.exports.errorHandler = errorHandler
-module.exports.logDetails = logDetails
