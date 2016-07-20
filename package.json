@@ -1,6 +1,6 @@
 {
   "name": "hyperserv",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "hypermodular http server",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,6 @@
     "nodemon": "^1.9.2",
     "request": "^2.73.0",
     "snazzy": "^4.0.0",
-    "request": "^2.73.0",
     "standard": "^7.1.2",
     "standard-format": "^2.2.2",
     "tape": "^4.6.0"
