@@ -8,6 +8,7 @@ npm i hyperserv
 
 [![Build Status](https://travis-ci.org/bcomnes/hyperserv.svg?branch=master)](https://travis-ci.org/bcomnes/hyperserv)
 [![Dependency Status](https://david-dm.org/bcomnes/hyperserv.svg)](https://david-dm.org/bcomnes/hyperserv)
+[![NSP Status](https://nodesecurity.io/orgs/hypermodules/projects/998c231a-f4c8-4da3-bd23-619a334bcc39/badge)](https://nodesecurity.io/orgs/hypermodules/projects/998c231a-f4c8-4da3-bd23-619a334bcc39)
 
 ## Why?
 
