@@ -1,0 +1,24 @@
+# hyperserv change log
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
+
+## [3.0.0](https://github.com/bcomnes/hyperserv/releases/v3.0.0)
+
+[view diff](https://github.com/bcomnes/hyperserv/compare/v2.0.0...v3.0.0)
+
+### Breaking Changes
+
+- remove static file server and dependencies
+
+### Commits
+
+* [[`d9904e0ceb`](https://github.com/bcomnes/hyperserv/commit/d9904e0ceb)] - Remove static file server (Bret Comnes)
+* [[`6bf8804cd8`](https://github.com/bcomnes/hyperserv/commit/6bf8804cd8)] - Merge pull request #2 from bcomnes/greenkeeper-snazzy-5.0.0 (Bret Comnes)
+* [[`001676c665`](https://github.com/bcomnes/hyperserv/commit/001676c665)] - chore(package): update snazzy to version 5.0.0 (greenkeeperio-bot)
+* [[`b9df576119`](https://github.com/bcomnes/hyperserv/commit/b9df576119)] - Merge pull request #1 from bcomnes/greenkeeper-standard-8.0.0 (Bret Comnes)
+* [[`0152e7969a`](https://github.com/bcomnes/hyperserv/commit/0152e7969a)] - chore(package): update standard to version 8.0.0 (greenkeeperio-bot)
+* [[`f164c58114`](https://github.com/bcomnes/hyperserv/commit/f164c58114)] - Update README.md (Bret Comnes)
+* [[`2680444d92`](https://github.com/bcomnes/hyperserv/commit/2680444d92)] - Update README.md (Bret Comnes)
+* [[`247bf5b388`](https://github.com/bcomnes/hyperserv/commit/247bf5b388)] - update to 2.0.0 to rework api (Bret Comnes)

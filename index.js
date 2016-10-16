@@ -1,6 +1,4 @@
 var http = require('http')
-var st = require('st')
-var path = require('path')
 var HttpHashRouter = require('http-hash-router')
 var morgan = require('morgan')
 var Stack = require('stack')
@@ -20,23 +18,8 @@ function Hyperserv (opts) {
 
   this._logDetails = (opts.logDetails === undefined) ? true : !!opts.logDetails
   this._logTraces = (opts.logTraces === undefined) ? true : !!opts.logTraces
-  this._serveStatic = (opts.serveStatic === undefined) ? true : !!opts.serveStatic
   this._layers = opts.layers || [ this.logger ]
   this._stack = Stack.compose.apply(null, this._layers)
-  this._staticPath = opts.staticPath || path.join(process.cwd(), 'static')
-  this._staticMount = opts.staticMount || `/${path.basename(this._staticPath)}`
-
-  if (this._serveStatic) {
-    this._staticLayer = st({
-      path: this._staticPath,
-      url: this._staticMount,
-      passthrough: true
-    })
-    this.router.set(
-      this._staticMount + '/*',
-      makeRoute(this._staticLayer)
-    )
-  }
 
   if (this._logDetails) this.httpServer.on('listening', logDetails)
   if (this._logTraces) this.httpServer.on('error', this.errorHandler)

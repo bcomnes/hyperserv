@@ -2,7 +2,6 @@ var test = require('tape')
 var request = require('request')
 var Hyperserv = require('./index')
 var assign = Object.assign
-
 var port = 8976
 var url = `http://localhost:${port}`
 

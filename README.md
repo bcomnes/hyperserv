@@ -11,7 +11,7 @@ npm i hyperserv
 
 ## Why?
 
-Express is a reliable and widely understood web-framework, but the dream of node.js was framework free network applicaitons.  [http-framework](https://github.com/Raynos/http-framework) and [substack-flavored-webapp](https://github.com/substack/substack-flavored-webapp) are excellent counterpoints to frameworks like express and hapi but come along with a pile of boilerplate.  hyperserv aims to glue together the basics of any webserver by providing a routing layer, a middlware layer and a static file server to offer up a quick way to write small webservers the hypermodular way (or, more specifically, one hypermodular way)!
+Express is a reliable and widely understood web-framework, but the dream of node.js was framework free network applicaitons.  [http-framework](https://github.com/Raynos/http-framework) and [substack-flavored-webapp](https://github.com/substack/substack-flavored-webapp) are excellent counterpoints to frameworks like express and hapi but come along with a pile of boilerplate.  hyperserv aims to glue together the basics of any webserver by providing a routing layer and a middlware layer to offer up a quick way to write small webservers the hypermodular way (or, more specifically, one hypermodular way)!
 
 How you launch and configure your webservers seems to be a deeply personal ceremony.  hyperserv leaves this up to you and just puts together the webserver for you.
 
@@ -22,11 +22,14 @@ How you launch and configure your webservers seems to be a deeply personal cerem
 var minimist = require('minimist')
 var morgan = require('morgan')
 var Hyperserv = require('hyperserv')
+var makeRoute = Hyperserv.makeRoute
 var app = new Hyperserv()
 var argv = minimist(process.argv.slice(2), {
   alias: { p: 'port' },
   default: { port: 8000 }
 })
+var ecstatic = require('ecstatic')
+var path = require('path')
 
 process.title = 'hyperserv'
 
@@ -35,12 +38,20 @@ app.composeStack([
   morgan('dev')
 ])
 
+var staticPath = path.join(__dirname, 'static')
+console.log(staticPath)
+app.router.set('/static', makeRoute(ecstatic({
+  root: staticPath,
+  baseDir: 'static',
+  handleError: false
+})))
+
 // Set up routes
 app.router.set('/', function (req, res, opts, cb) {
   res.end('hi')
 })
 
-// Set up routes with parameters
+// Set up routes
 app.router.set('/:name', function (req, res, opts, cb) {
   res.end('hello ' + opts.params.name)
 })
@@ -71,16 +82,13 @@ You can convert `layers` to `routes` by passing the through `hyperserv.makeRoute
 
 #### `var app = new Hyperserv([options])`
 
-Returns a new hyperserv `app` object. It sets up an httpServer that has a middleware handler, router, and possibly a static file server turned on.
+Returns a new hyperserv `app` object. It sets up an httpServer that has a middleware handler and router.
 
 Default options:
 
 ```js
 {
   layers: [ require('morgan')('dev') ],
-  serveStatic: true,
-  staticPath: path.join(process.cwd(), 'static'),
-  staticMount: `/${path.basename(opts.staticPath)}`,
   sendTraces: true,
   logTraces: true,
   logDetails: true
@@ -88,9 +96,6 @@ Default options:
 ```
 
 - `layers`: Provide an array of middleware functions (`function layer (req, res, cb) {}`) that get stuck in front of the final routing layer.  You can reconfigure this layer at any point with `server.composeStack`.
-- `serveStatic`: Enable the static file server route provided by [`st`](http://npmjs.com/st). Defaults to `true`.  Short circuits to `false` if it can't stat the folder it tries to serve out of.
-- `staticPath`: Specify the path to serve static files from.  Defaults to `path.join(process.cwd(), 'static')` e.g. a folder named `static` in the directory you are starting your process in.
-- `staticMount`: Specify the router mount point to use.  Defaults to `/${path.basename(opts.staticPath)}`.
 - `sendTraces`: Specify if stack traces are sent in the `res` if the `req` runs into any kind of error.  Defaults to `false`
 - `logTraces`: Attach the default error handler to the `error` event emitted from the server whenever it encounters an error.
 
@@ -152,5 +157,4 @@ function makeRoute (layer) {
 }
 ```
 
-`¯\_(ツ)_/¯`
 
