@@ -1,5 +1,5 @@
 var http = require('http')
-var HttpHashRouter = require('http-hash-router')
+var HttpHashRouter = require('@bret/http-hash-router')
 var morgan = require('morgan')
 var Stack = require('stack')
 var finalhandler = require('finalhandler')
