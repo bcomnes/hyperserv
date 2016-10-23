@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.0.1](https://github.com/bcomnes/hyperserv/releases/v3.0.1)
+
+[view diff](https://github.com/bcomnes/hyperserv/compare/v3.0.0...v3.0.1)
+
+### Patch Changes
+
+- update to using a fork of http-hash-router
+
+### Commits
+
+* [[`4a1771cd57`](https://github.com/bcomnes/hyperserv/commit/4a1771cd57)] - use updated hash router fork (Bret Comnes)
+
 ## [3.0.0](https://github.com/bcomnes/hyperserv/releases/v3.0.0)
 
 [view diff](https://github.com/bcomnes/hyperserv/compare/v2.0.0...v3.0.0)
