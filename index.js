@@ -3,7 +3,6 @@ var HttpHashRouter = require('@bret/http-hash-router')
 var morgan = require('morgan')
 var Stack = require('stack')
 var finalhandler = require('finalhandler')
-var extend = require('xtend')
 
 function Hyperserv (opts) {
   if (!(this instanceof Hyperserv)) return new Hyperserv(opts)
@@ -62,12 +61,4 @@ Hyperserv.prototype.errorHandler = function (err) {
 
 Hyperserv.prototype.logger = morgan('dev')
 
-function makeRoute (layer) {
-  return (req, res, opts, cb) => {
-    req.opts = extend(req.opts, opts)
-    layer(req, res, cb)
-  }
-}
-
 module.exports = Hyperserv
-module.exports.makeRoute = makeRoute

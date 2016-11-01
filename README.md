@@ -22,7 +22,6 @@ How you launch and configure your webservers seems to be a deeply personal cerem
 var minimist = require('minimist')
 var morgan = require('morgan')
 var Hyperserv = require('hyperserv')
-var makeRoute = Hyperserv.makeRoute
 var app = new Hyperserv()
 var argv = minimist(process.argv.slice(2), {
   alias: { p: 'port' },
@@ -40,11 +39,11 @@ app.composeStack([
 
 var staticPath = path.join(__dirname, 'static')
 console.log(staticPath)
-app.router.set('/static', makeRoute(ecstatic({
+app.router.set('/static', ecstatic({
   root: staticPath,
   baseDir: 'static',
   handleError: false
-})))
+}))
 
 // Set up routes
 app.router.set('/', function (req, res, opts, cb) {
@@ -66,19 +65,16 @@ function expressMiddleware (req, res, next) {
   res.end('this is an express/connect style middleware layer')
 }
 
-app.router.set('/:name/express', Hyperserv.makeRoute(expressMiddleware))
+app.router.set('/:name/express', expressMiddleware)
 
 app.httpServer.listen(argv.port)
 ```
 
 ## API
 
-#### Routes vs Layers
+#### Routes vs Layers No More!
 
-- `layer`: Layers are what `stack` expects to get.  They conform to the `connect`/`express` style middleware with the following signature: `function layer (req, res, cb) {}`
-- `route`: Routes are what `http-hash-router` expect to receive as route handlers.  They have an additional `opts` argument because taping notes to `req` and `res` objects gets out of hand quickly.  They expect the following signature: `function route (req, res, opts, cb) {}`.
-
-You can convert `layers` to `routes` by passing the through `hyperserv.makeRoute(layer)`.
+Hyperserv now supports connect style routes out of the box.  The `opts` object that olds params and app level vars are now extended into the `req.opts` object by default.
 
 #### `var app = new Hyperserv([options])`
 

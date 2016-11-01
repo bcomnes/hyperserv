@@ -1,7 +1,6 @@
 var minimist = require('minimist')
 var morgan = require('morgan')
 var Hyperserv = require('../')
-var makeRoute = Hyperserv.makeRoute
 var app = new Hyperserv()
 var argv = minimist(process.argv.slice(2), {
   alias: { p: 'port' },
@@ -18,12 +17,12 @@ app.composeStack([
 ])
 
 var staticPath = path.join(__dirname, 'static')
-console.log(staticPath)
-app.router.set('/static', makeRoute(ecstatic({
+
+app.router.set('/static/*', ecstatic({
   root: staticPath,
   baseDir: 'static',
   handleError: false
-})))
+}))
 
 // Set up routes
 app.router.set('/', function (req, res, opts, cb) {
@@ -45,6 +44,6 @@ function expressMiddleware (req, res, next) {
   res.end('this is an express/connect style middleware layer')
 }
 
-app.router.set('/:name/express', Hyperserv.makeRoute(expressMiddleware))
+app.router.set('/:name/express', expressMiddleware)
 
 app.httpServer.listen(argv.port)
