@@ -4,9 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [4.0.0](https://github.com/bcomnes/hyperserv/releases/v4.0.0)
+## [4.0.1](https://github.com/bcomnes/hyperserv/releases/v4.0.1)
 
 ### Patch Changes
+
+- Remove http-hash-router from deps.  Tracking in the fork instead.
+
+### Commits
+
+* [[`eecb36c85a`](https://github.com/bcomnes/hyperserv/commit/eecb36c85a)] - remove http-hash-router (Bret Comnes)
+
+
+[view diff](https://github.com/bcomnes/hyperserv/compare/v4.0.0...v4.0.1)
+
+## [4.0.0](https://github.com/bcomnes/hyperserv/releases/v4.0.0)
+
+### Major Changes
 
 - Use introspection to use both express and http-hash-router style route functions.
 - You no longer need to wrap express routes in `Hyperserv.makeRoute`.
