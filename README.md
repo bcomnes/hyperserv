@@ -1,6 +1,6 @@
 # hyperserv
 
-A hypermodular http server that glues together [http](https://nodejs.org/api/http.html), [stack](http://github.com/creationix/stack) and [http-hash-router](https://github.com/Matt-Esch/http-hash-router).
+A hypermodular http server that glues together [http](https://nodejs.org/api/http.html), [stack](http://github.com/creationix/stack) and [@bret/http-hash-router](https://github.com/bcomnes/http-hash-router).
 
 ```
 npm i hyperserv
@@ -74,7 +74,7 @@ app.httpServer.listen(argv.port)
 
 #### Routes vs Layers No More!
 
-Hyperserv now supports connect style routes out of the box.  The `opts` object that olds params and app level vars are now extended into the `req.opts` object by default.
+Hyperserv now supports connect style routes out of the box.  The `opts` object that holds params and app level vars are now extended into the `req.opts` object by default, when the route doesn't accept an `opts` argument.
 
 #### `var app = new Hyperserv([options])`
 
@@ -109,16 +109,16 @@ This is an instance of `http.createServer`.  It isn't started yet, so set up you
 
 #### `app.router`
 
-This is the `http-hash-router` router object that has simply been attached to the `http` server instance.  Read all about it here:
+This is the `@bret/http-hash-router` router object that has simply been attached to the `http` server instance.  Read all about it here:
 
-- [Matt-Esch/http-hash-router](https://github.com/Matt-Esch/http-hash-router)
+- [bcomnes/http-hash-router](https://github.com/bcomnes/http-hash-router)
 - [Matt-Esch/http-hash](https://github.com/Matt-Esch/http-hash)
 
 #### `app.router.set(pattern, routeHandler)`
 
 This sets a route and a route handler.  Remember, routeHandlers expect the following signature `function route (req, res, opts, cb) {}`.  You can compose middleware stack's to plop inside of route handlers using [`stack.compose`](https://github.com/creationix/stack/blob/master/stack.js#L36).
 
-See [http-hash-router#example](https://github.com/Matt-Esch/http-hash-router#example)
+See [bcomnes/http-hash-router#example](https://github.com/bcomnes/http-hash-router#example)
 
 #### `app.composeStack([ layers ])`
 
@@ -140,7 +140,7 @@ If you want to use it as is with the server, use the `logTraces` option.  It is 
 
 This is the default logging function that runs when the server starts listening.  Use the `logDetails` options to turn it on or off.  It is an instance method that you can reassign if you want.
 
-#### `Hyperserv.makeRoute(layer)`
+#### `Hyperserv.makeRoute(layer)` (Depreciated)
 
 Pass in a connect style middleware layer and get back a `http-hash-router` route handler.  The returned route handler mixes in any options it receives on its `opts` argument to `req.opts`.
 

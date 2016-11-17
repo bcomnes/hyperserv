@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.0.0](https://github.com/bcomnes/hyperserv/releases/v4.0.0)
+
+### Patch Changes
+
+- Use introspection to use both express and http-hash-router style route functions.
+- You no longer need to wrap express routes in `Hyperserv.makeRoute`.
+
+### Commits
+
+* [[`23f54d2484`](https://github.com/bcomnes/hyperserv/commit/23f54d2484)] - use @bret/http-hash-router 2.0.0 (Bret Comnes)
+* [[`d76e8db792`](https://github.com/bcomnes/hyperserv/commit/d76e8db792)] - pushing http-hash-router to track with greenkeepr (Bret Comnes)
+
+[view diff](https://github.com/bcomnes/hyperserv/compare/v3.0.1...v4.0.0)
+
 ## [3.0.1](https://github.com/bcomnes/hyperserv/releases/v3.0.1)
 
 [view diff](https://github.com/bcomnes/hyperserv/compare/v3.0.0...v3.0.1)
