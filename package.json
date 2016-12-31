@@ -26,8 +26,7 @@
     "nodemon": "^1.9.2",
     "request": "^2.73.0",
     "snazzy": "^5.0.0",
-    "standard": "^8.0.0",
-    "standard-format": "^2.2.2",
+    "standard": "^8.5.0",
     "tape": "^4.6.0"
   },
   "dependencies": {

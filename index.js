@@ -45,7 +45,7 @@ function Hyperserv (opts) {
     console.log(`listening on http://localhost:${self.httpServer.address().port}`)
     if (self._serveStatic) {
       console.log('serving static from ' +
-        `${self._staticPath} at ${self._staticMount}`)
+                 `${self._staticPath} at ${self._staticMount}`)
     }
   }
 }
