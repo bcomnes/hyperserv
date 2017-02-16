@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@bret/http-hash-router": "^2.0.0",
-    "finalhandler": "^0.5.0",
+    "finalhandler": "^1.0.0",
     "minimist": "^1.2.0",
     "morgan": "^1.7.0",
     "stack": "^0.1.0"
