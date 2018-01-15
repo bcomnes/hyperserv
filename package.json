@@ -22,7 +22,7 @@
   "devDependencies": {
     "@tap-format/spec": "^0.2.0",
     "changelog-maker": "^2.2.4",
-    "dependency-check": "^2.6.0",
+    "dependency-check": "^3.0.0",
     "nodemon": "^1.9.2",
     "request": "^2.73.0",
     "snazzy": "^7.0.0",
