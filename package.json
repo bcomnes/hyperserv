@@ -23,7 +23,7 @@
     "@tap-format/spec": "^0.2.0",
     "changelog-maker": "^2.2.4",
     "dependency-check": "^3.0.0",
-    "nodemon": "^1.9.2",
+    "nodemon": "^1.18.1",
     "request": "^2.85.0",
     "snazzy": "^7.0.0",
     "standard": "^11.0.0",
