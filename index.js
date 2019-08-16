@@ -17,7 +17,7 @@ function Hyperserv (opts) {
 
   this._logDetails = (opts.logDetails === undefined) ? true : !!opts.logDetails
   this._logTraces = (opts.logTraces === undefined) ? true : !!opts.logTraces
-  this._layers = opts.layers || [ this.logger ]
+  this._layers = opts.layers || [this.logger]
   this._stack = Stack.compose.apply(null, this._layers)
 
   if (this._logDetails) this.httpServer.on('listening', logDetails)

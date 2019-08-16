@@ -4,7 +4,7 @@
   "description": "hypermodular http server",
   "main": "index.js",
   "scripts": {
-    "test": "dependency-check . && standard | snazzy && tape test.js | tap-format-spec"
+    "test": "dependency-check . --no-dev && standard | snazzy && tape test.js | tap-format-spec"
   },
   "repository": {
     "type": "git",
@@ -32,7 +32,6 @@
   "dependencies": {
     "@bret/http-hash-router": "^2.0.0",
     "finalhandler": "^1.0.0",
-    "minimist": "^1.2.0",
     "morgan": "^1.7.0",
     "stack": "^0.1.0"
   }
