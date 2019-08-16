@@ -84,7 +84,7 @@ test('create custom middleware stacks', function (t) {
     next()
   }
 
-  var app = Hyperserv(assign({}, defaults, {layers: [ testLayer ]}))
+  var app = Hyperserv(assign({}, defaults, { layers: [testLayer] }))
   app.router.set('/foo', function foo (req, res, opts, cb) {
     res.end('foo')
   })

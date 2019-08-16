@@ -4,7 +4,7 @@
   "description": "hypermodular http server",
   "main": "index.js",
   "scripts": {
-    "test": "dependency-check . && standard | snazzy && tape test.js | tap-format-spec"
+    "test": "dependency-check . --no-dev && standard | snazzy && tape test.js | tap-format-spec"
   },
   "repository": {
     "type": "git",
@@ -22,7 +22,7 @@
   "devDependencies": {
     "@tap-format/spec": "^0.2.0",
     "changelog-maker": "^2.2.4",
-    "dependency-check": "^3.0.0",
+    "dependency-check": "^4.1.0",
     "nodemon": "^1.18.9",
     "request": "^2.85.0",
     "snazzy": "^8.0.0",
@@ -32,7 +32,6 @@
   "dependencies": {
     "@bret/http-hash-router": "^2.0.0",
     "finalhandler": "^1.0.0",
-    "minimist": "^1.2.0",
     "morgan": "^1.7.0",
     "stack": "^0.1.0"
   }
