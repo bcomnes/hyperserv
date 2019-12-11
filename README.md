@@ -1,6 +1,8 @@
 # hyperserv
 
-A hypermodular http server that glues together [http](https://nodejs.org/api/http.html), [stack](http://github.com/creationix/stack) and [@bret/http-hash-router](https://github.com/bcomnes/http-hash-router).
+**Project depreciated**: This was a fun project but you should use [express](https://expressjs.com) or [fastify](https://www.fastify.io) for real work.
+
+A hypermodular http server that glues together [http](https://nodejs.org/api/http.html), [stack](http://github.com/creationix/stack) and [@bret/http-hash-router](https://github.com/bcomnes/http-hash-router).  
 
 ```
 npm i hyperserv
